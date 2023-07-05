@@ -30,13 +30,6 @@ public class PostEsDaoTest {
     @Resource
     private PostService postService;
 
-    @Test
-    void test() {
-        PostQueryRequest postQueryRequest = new PostQueryRequest();
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Post> page =
-                postService.searchFromEs(postQueryRequest);
-        System.out.println(page);
-    }
 
     @Test
     void testSelect() {

@@ -6,7 +6,6 @@ import com.cclu.springbootinit.common.ErrorCode;
 import com.cclu.springbootinit.common.ResultUtils;
 import com.cclu.springbootinit.constant.FileConstant;
 import com.cclu.springbootinit.exception.BusinessException;
-import com.cclu.springbootinit.manager.CosManager;
 import com.cclu.springbootinit.model.dto.file.UploadFileRequest;
 import com.cclu.springbootinit.model.entity.User;
 import com.cclu.springbootinit.model.enums.FileUploadBizEnum;
@@ -37,8 +36,6 @@ public class FileController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private CosManager cosManager;
 
     /**
      * 文件上传
@@ -67,7 +64,6 @@ public class FileController {
             // 上传文件
             file = File.createTempFile(filepath, null);
             multipartFile.transferTo(file);
-            cosManager.putObject(filepath, file);
             // 返回可访问地址
             return ResultUtils.success(FileConstant.COS_HOST + filepath);
         } catch (Exception e) {
