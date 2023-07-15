@@ -3,7 +3,7 @@
 </template>
 
 <style scoped>
-.my-divider {
+#my-divider {
   margin-bottom: 16px;
 }
 </style>

@@ -7,7 +7,6 @@
       size="large"
       @search="onSearch"
     />
-    {{ JSON.stringify(userList) }}
     <my-divider />
     <a-tabs v-model:activeKey="activeKey" @change="onTabChange">
       <a-tab-pane key="post" tab="文章">
