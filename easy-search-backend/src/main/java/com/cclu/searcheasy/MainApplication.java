@@ -16,7 +16,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  *  
  */
 @SpringBootApplication
-@MapperScan("com.cclu.springbootinit.mapper")
 @EnableScheduling
 @EnableRedisHttpSession
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)

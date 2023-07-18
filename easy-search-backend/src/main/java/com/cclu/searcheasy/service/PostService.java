@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cclu.searcheasy.model.dto.post.PostQueryRequest;
 import com.cclu.searcheasy.model.entity.Post;
 import com.cclu.searcheasy.model.vo.PostVO;
+import javafx.geometry.Pos;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -50,4 +52,12 @@ public interface PostService extends IService<Post> {
      * @return
      */
     Page<PostVO> getPostVOPage(Page<Post> postPage, HttpServletRequest request);
+
+    /**
+     * 获取帖子视图
+     * @param postQueryRequest
+     * @param request
+     * @return
+     */
+    Page<PostVO> listPostVOPage(PostQueryRequest postQueryRequest, HttpServletRequest request);
 }

@@ -3,6 +3,7 @@ package com.cclu.searcheasy.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cclu.searcheasy.common.ResultUtils;
 import com.google.gson.Gson;
 import com.cclu.searcheasy.common.ErrorCode;
 import com.cclu.searcheasy.constant.CommonConstant;
@@ -196,6 +197,16 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         }).collect(Collectors.toList());
         postVOPage.setRecords(postVOList);
         return postVOPage;
+    }
+
+    @Override
+    public Page<PostVO> listPostVOPage(PostQueryRequest postQueryRequest, HttpServletRequest request) {
+        long current = postQueryRequest.getCurrent();
+        long size = postQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        Page<Post> postPage = page(new Page<>(current, size), getQueryWrapper(postQueryRequest));
+        return getPostVOPage(postPage, request);
     }
 
 }

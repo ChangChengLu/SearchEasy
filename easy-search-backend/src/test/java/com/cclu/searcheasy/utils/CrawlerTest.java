@@ -1,14 +1,12 @@
 package com.cclu.searcheasy.utils;
 
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.cclu.searcheasy.model.entity.Picture;
 import com.cclu.searcheasy.model.entity.Post;
 import com.cclu.searcheasy.service.PostService;
-import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.summary.TextRankKeyword;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -81,6 +79,35 @@ public class CrawlerTest {
 
         boolean b = postService.saveBatch(postList);
         Assertions.assertTrue(b);
+    }
+
+    @Test
+    public void fetchPicture() {
+        int page = 1;
+        String url = String.format("https://ssr1.scrape.center/page/%d", page);
+
+        List<Picture> pictureList = new ArrayList<>();
+        try {
+            Document document = Jsoup.connect(url).get();
+            Elements elements = document.select(".el-card.item.m-t.is-hover-shadow");
+            for (Element element : elements) {
+                // 获取 图片 URL
+                Element imgCardElement = element.select(".el-col.el-col-24.el-col-xs-8.el-col-sm-6.el-col-md-4").get(0);
+                String imgUrl = imgCardElement.select("img").get(0).attr("src");
+                // 获取 图片 标题
+                String title = element.select("h2.m-b-sm").get(0).text();
+                // 创建 图片对象，保存到列表中
+                Picture picture = new Picture();
+                picture.setTitle(title);
+                picture.setUrl(imgUrl);
+                pictureList.add(picture);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (Picture picture : pictureList) {
+            System.out.println(picture);
+        }
     }
 
 }

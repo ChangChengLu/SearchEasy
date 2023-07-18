@@ -1,9 +1,9 @@
 <template>
   <div class="index-page">
     <a-input-search
-      v-model:value="searchParams.text"
-      placeholder="input search text"
-      enter-button="Search"
+      v-model:value="searchText"
+      placeholder="请输⼊搜索关键词"
+      enter-button="搜索"
       size="large"
       @search="onSearch"
     />
@@ -13,7 +13,7 @@
         <PostList :post-list="postList" />
       </a-tab-pane>
       <a-tab-pane key="picture" tab="图片">
-        <PictureList />
+        <PictureList :picture-list="pictureList" />
       </a-tab-pane>
       <a-tab-pane key="user" tab="用户">
         <UserList :user-list="userList" />
@@ -37,36 +37,102 @@ const activeKey = route.params.category;
 
 const postList = ref([]);
 
-myAxios.post("/post/list/page/vo", {}).then((res: any) => {
-  console.log(res.records);
-  postList.value = res.records;
-});
-
 const userList = ref([]);
 
-myAxios.post("/user/list/page/vo", {}).then((res: any) => {
-  console.log(res.records);
-  userList.value = res.records;
-});
+const pictureList = ref([]);
 
 const initSearchParams = {
   text: "",
+  type: activeKey,
   pageNum: 1,
   pageSize: 10,
 };
 
+const searchText = ref(route.query.text || "");
+
+// const loadDataOld = (params: any) => {
+//   const postQuery = {
+//     ...params,
+//     searchText: params.text,
+//   };
+//   myAxios.post("/post/list/page/vo", postQuery).then((res: any) => {
+//     console.log(res.records);
+//     postList.value = res.records;
+//   });
+//   const pictureQuery = {
+//     ...params,
+//     searchText: params.text,
+//   };
+//   myAxios.post("/picture/list/page/vo", pictureQuery).then((res: any) => {
+//     console.log(res.records);
+//     pictureList.value = res.records;
+//   });
+//   const userQuery = {
+//     ...params,
+//     userName: params.text,
+//   };
+//   myAxios.post("/user/list/page/vo", userQuery).then((res: any) => {
+//     console.log(res.records);
+//     userList.value = res.records;
+//   });
+// };
+
+// const loadDataAll = (params: any) => {
+//   const queryParams = {
+//     ...params,
+//     searchText: params.text,
+//   };
+//   myAxios.post("/search/all", params).then((res: any) => {
+//     userList.value = res.userList;
+//     postList.value = res.postList;
+//     pictureList.value = res.pictureList;
+//   });
+// };
+
+const loadData = (params: any) => {
+  const query = {
+    ...params,
+    searchText: params.text,
+  };
+  if (query.type === "") {
+    myAxios.post("/search/all", query).then((res: any) => {
+      userList.value = res.userList;
+      postList.value = res.postList;
+      pictureList.value = res.pictureList;
+      return;
+    });
+  }
+  myAxios.post("/search/type", query).then((res: any) => {
+    console.log(res);
+    if (query.type === "post") {
+      postList.value = res.dataList;
+    } else if (query.type === "user") {
+      userList.value = res.dataList;
+    } else if (query.type === "picture") {
+      pictureList.value = res.dataList;
+    }
+  });
+};
+
 const searchParams = ref(initSearchParams);
+// 首次请求
+// loadData(searchParams);
 
 watchEffect(() => {
   searchParams.value = {
     ...initSearchParams,
     text: route.query.text,
+    type: route.params.catagory,
   } as any;
+  loadData(searchParams.value);
 });
 
-const onSearch = () => {
+const onSearch = (value: string) => {
   router.push({
-    query: searchParams.value,
+    query: {
+      ...searchParams,
+      text: value,
+    } as any,
   });
 };
 
